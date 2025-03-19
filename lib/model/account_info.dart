@@ -1,9 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:aptos_connect/model/account_address.dart';
-import 'package:pinenacl/api.dart';
 
 class AccountInfo {
   final String? name;
-  final PublicKey publicKey;
+  final Uint8List publicKey;
   final AccountAddress address;
 
   AccountInfo({

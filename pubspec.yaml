@@ -11,7 +11,6 @@ dependencies:
   flutter:
     sdk: flutter
   bcs: ^0.1.1
-  pinenacl: ^0.6.0
   hex: ^0.2.0
   flutter_inappwebview: ^6.1.5
   web: ^1.1.1
