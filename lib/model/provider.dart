@@ -1,0 +1,1 @@
+enum AptosProvider { apple, google }
