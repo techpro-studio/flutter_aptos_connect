@@ -86,6 +86,16 @@ class AccountAddress implements BCSSerializable {
   void serializeBCS(Serializer serializer) {
     return bcsSerializer.serializeIn(serializer, this);
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AccountAddress &&
+          runtimeType == other.runtimeType &&
+          address == other.address;
+
+  @override
+  int get hashCode => address.hashCode;
 }
 
 class _AccountAddressSerializer implements BCSSerializer<AccountAddress> {

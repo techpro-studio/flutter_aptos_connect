@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:aptos_connect/bcs/serializer.dart';
+import 'package:aptos_connect/crypto/accounts_storage.dart';
 import 'package:aptos_connect/crypto/crypto_client.dart';
 import 'package:aptos_connect/model/connect_request.dart';
 import 'package:aptos_connect/model/connect_response.dart';
@@ -16,10 +17,17 @@ class AptosConnectClient {
   final CryptoClient _cryptoClient;
   final Transport _transport;
   final DAppInfo _appInfo;
+  final AccountsStorage _accountsStorage;
 
-  AptosConnectClient(this._cryptoClient, this._transport, this._appInfo);
+  AptosConnectClient(
+    this._cryptoClient,
+    this._transport,
+    this._accountsStorage,
+    this._appInfo,
+  );
 
   Future<void> disconnect() async {
+    await _accountsStorage.removeAccounts();
     await _cryptoClient.deleteKeyPair();
   }
 
