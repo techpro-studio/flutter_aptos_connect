@@ -3,10 +3,11 @@ import 'dart:typed_data';
 import 'package:aptos_connect/bcs/deserializer.dart';
 import 'package:aptos_connect/bcs/serializer.dart';
 import 'package:aptos_connect/model/hex_string.dart';
+import 'package:aptos_connect/model/serializer.dart';
 
-class AccountAddress {
+class AccountAddress implements BCSSerializable {
   static const int length = 32;
-  static const String CoreCodeAddress = "0x1";
+  static const String _coreCodeAddress = "0x1";
 
   final Uint8List address;
 
@@ -21,7 +22,7 @@ class AccountAddress {
   }
 
   static AccountAddress coreCodeAddress() {
-    return AccountAddress.fromHex(CoreCodeAddress);
+    return AccountAddress.fromHex(_coreCodeAddress);
   }
 
   static AccountAddress fromHex(String addr) {
@@ -68,16 +69,6 @@ class AccountAddress {
     return addressBytes.length <= AccountAddress.length;
   }
 
-  void serialize(Serializer serializer) {
-    serializer.serializeFixedBytes(address);
-  }
-
-  static AccountAddress deserialize(Deserializer deserializer) {
-    return AccountAddress(
-      deserializer.deserializeFixedBytes(AccountAddress.length),
-    );
-  }
-
   static standardizeAddress(String address) {
     final lowercaseAddress = address.toLowerCase();
     final addressWithoutPrefix =
@@ -86,5 +77,29 @@ class AccountAddress {
             : lowercaseAddress;
     final addressWithPadding = addressWithoutPrefix.padLeft(64, "0");
     return "0x$addressWithPadding";
+  }
+
+  static const BCSSerializer<AccountAddress> bcsSerializer =
+      _AccountAddressSerializer._();
+
+  @override
+  void serializeBCS(Serializer serializer) {
+    return bcsSerializer.serializeIn(serializer, this);
+  }
+}
+
+class _AccountAddressSerializer implements BCSSerializer<AccountAddress> {
+  const _AccountAddressSerializer._();
+
+  @override
+  AccountAddress deserializeIn(Deserializer deserializer) {
+    return AccountAddress(
+      deserializer.deserializeFixedBytes(AccountAddress.length),
+    );
+  }
+
+  @override
+  void serializeIn(Serializer serializer, AccountAddress value) {
+    serializer.serializeFixedBytes(value.address);
   }
 }

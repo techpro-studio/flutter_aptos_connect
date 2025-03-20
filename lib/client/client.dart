@@ -1,12 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:aptos_connect/bcs/serializer.dart';
 import 'package:aptos_connect/crypto/crypto_client.dart';
 import 'package:aptos_connect/model/connect_request.dart';
+import 'package:aptos_connect/model/connect_response.dart';
 import 'package:aptos_connect/model/dapp.dart';
 import 'package:aptos_connect/model/provider.dart' show AptosProvider;
 import 'package:aptos_connect/model/wallet_request.dart';
+import 'package:aptos_connect/model/wallet_response.dart';
 import 'package:aptos_connect/transport/transport.dart';
+import 'package:flutter/foundation.dart';
 
 class AptosConnectClient {
   final CryptoClient _cryptoClient;
@@ -19,24 +23,23 @@ class AptosConnectClient {
     await _cryptoClient.deleteKeyPair();
   }
 
-  Future<WalletRequest> getConnectionWalletRequest() async {
+  Future<WalletResponse<ConnectResponse>> connect(
+    AptosProvider provider,
+  ) async {
     final serializer = Serializer();
     DAppInfo.bcsSerializer.serializeIn(serializer, _appInfo);
-    final keyPair = await _cryptoClient.getKeyPair();
-    ConnectRequest.bcsSerializer.serializeIn(
-      serializer,
-      ConnectRequest(
-        // dAppEd25519PublicKeyB64: base64Encode(keyPair.publicKey.toUint8List()),
-      ),
-    );
-    final data = serializer.getBytes();
-    return WalletRequest(name: 'connect', version: 4, data: data);
-  }
-
-  Future connect(AptosProvider provider) async {
-    return _transport.performWalletRequest(
-      await getConnectionWalletRequest(),
+    String? publicKey;
+    if (kIsWeb || kIsWasm) {
+      final keyPair = await _cryptoClient.getKeyPair();
+      publicKey = base64Encode(keyPair.publicKey);
+    }
+    final request = ConnectRequest(dAppEd25519PublicKeyB64: publicKey);
+    request.serializeBCS(serializer);
+    final response = await _transport.performWalletRequest(
+      WalletRequest(name: 'connect', version: 4, data: serializer.getBytes()),
+      ConnectResponse.bcsSerializer,
       provider: provider,
     );
+    return response;
   }
 }

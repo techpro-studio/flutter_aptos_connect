@@ -1,81 +1,48 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:aptos_connect/bcs/serializer.dart';
 import 'package:aptos_connect/crypto/crypto_client.dart';
 import 'package:aptos_connect/model/provider.dart';
+import 'package:aptos_connect/model/serializer.dart';
 import 'package:aptos_connect/model/wallet_request.dart';
+import 'package:aptos_connect/model/wallet_response.dart';
 import 'package:aptos_connect/transport/transport.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:uuid/uuid.dart';
 
-// class AptosConnectionObject<T> {
-//   final Completer<T> _completer = Completer();
-//   final String _connectUrl;
-//   final String _domain;
-//
-//   AptosConnectionObject._({required String connectUrl, required String domain})
-//     : _connectUrl = connectUrl,
-//       _domain = domain;
-//
-//   Future<T> waitResult() {
-//     return _completer.future;
-//   }
-//
-//   Future<void> _pageHandler(
-//     InAppWebViewController controller,
-//     WebUri? url,
-//   ) async {
-//     if (url != null) {
-//       print("PAGE HANDLER APTOS CONNECT: $url");
-//     }
-//   }
-//
-//   void close() {
-//     _completer.complete();
-//   }
-//
-//   InAppWebView buildWebView() {
-//     return InAppWebView(
-//       initialSettings: InAppWebViewSettings(
-//         javaScriptEnabled: true,
-//         javaScriptCanOpenWindowsAutomatically: true,
-//         supportMultipleWindows: true,
-//         allowUniversalAccessFromFileURLs: true,
-//         clearCache: true,
-//         userAgent:
-//             'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
-//         clearSessionCache: true,
-//         // useShouldOverrideUrlLoading: true,
-//       ),
-//       initialUrlRequest: URLRequest(
-//         url: WebUri(_connectUrl),
-//         headers: {
-//           'Referer': _domain,
-//           'Sec-Fetch-Dest': 'document',
-//           'Sec-Fetch-Mode': 'navigate',
-//           'Sec-Fetch-Site': 'same-origin',
-//         },
-//       ),
-//       onLoadStop: _pageHandler,
-//     );
-//   }
-// }
+enum AptosConnectBrowserError { cancelled }
 
 class AptosConnectBrowser extends InAppBrowser {
+  Completer<String>? _completer = Completer();
+
+  final String redirectUri;
+
+  AptosConnectBrowser(this.redirectUri) : super();
+
   @override
   void onLoadStart(WebUri? url) {
-    super.onLoadStart(url);
-    print("Aptos connect onLoadStart: $url");
+    if (url == null) return;
+    if (!url.toString().startsWith(redirectUri)) {
+      return;
+    }
+    if (_completer == null) {
+      return;
+    }
+    _completer!.complete(url.queryParameters['response']);
+    _completer = null;
+    close();
   }
-}
 
-class AptosConnectOutsideBrowser extends ChromeSafariBrowser {
   @override
-  void onInitialLoadDidRedirect(WebUri? url) {
-    super.onInitialLoadDidRedirect(url);
-    print("Aptos connect onLoadStart: $url");
+  void onExit() {
+    if (_completer != null) {
+      // means 0x0 byte.
+      _completer!.complete('AA');
+      _completer = null;
+    }
   }
 }
 
@@ -146,8 +113,9 @@ class IOTransport implements Transport {
   }
 
   @override
-  Future performWalletRequest(
-    WalletRequest request, {
+  Future<WalletResponse<T>> performWalletRequest<T>(
+    WalletRequest request,
+    BCSSerializer<T> tSerializer, {
     AptosProvider? provider,
   }) async {
     final keyPair = await _cryptoClient.getKeyPair();
@@ -177,8 +145,31 @@ class IOTransport implements Transport {
       },
     );
 
-    final browser = AptosConnectOutsideBrowser();
+    final browser = AptosConnectBrowser(_config.redirectUrl);
 
-    await browser.open(url: WebUri(uri.toString()));
+    await browser.openUrlRequest(
+      settings: InAppBrowserClassSettings(
+        browserSettings: InAppBrowserSettings(
+          hideUrlBar: true,
+          hideCloseButton: false,
+          toolbarTopFixedTitle: "Aptos connect",
+        ),
+        webViewSettings: InAppWebViewSettings(
+          userAgent:
+              Platform.isIOS
+                  ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
+                  : 'Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36',
+        ),
+      ),
+      urlRequest: URLRequest(url: WebUri(uri.toString())),
+    );
+
+    final result = await browser._completer!.future;
+
+    final decoded = base64.decode(base64.normalize(result));
+
+    final walletResponseSerializer = WalletResponseSerializer(tSerializer);
+
+    return walletResponseSerializer.deserialize(decoded);
   }
 }

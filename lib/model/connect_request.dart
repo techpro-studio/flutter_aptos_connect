@@ -1,10 +1,9 @@
-import 'dart:typed_data';
-
+import 'package:aptos_connect/bcs/deserializer.dart';
 import 'package:aptos_connect/bcs/serializer.dart';
 import 'package:aptos_connect/model/claim_options.dart';
 import 'package:aptos_connect/model/serializer.dart';
 
-class ConnectRequest {
+class ConnectRequest implements BCSSerializable {
   final ClaimOptions? claimOptions;
   final String? dAppEd25519PublicKeyB64;
   final String? dAppId;
@@ -17,14 +16,20 @@ class ConnectRequest {
     this.preferredWalletName,
   });
 
-  static const bcsSerializer = _ConnectRequestBCSSerializer._();
+  static const BCSSerializer<ConnectRequest> bcsSerializer =
+      _ConnectRequestBCSSerializer._();
+
+  @override
+  void serializeBCS(Serializer serializer) {
+    bcsSerializer.serializeIn(serializer, this);
+  }
 }
 
 class _ConnectRequestBCSSerializer implements BCSSerializer<ConnectRequest> {
   const _ConnectRequestBCSSerializer._();
 
   @override
-  ConnectRequest deserialize(Uint8List bytes) {
+  ConnectRequest deserializeIn(Deserializer deserializer) {
     throw UnimplementedError("For now not done");
   }
 
@@ -36,7 +41,7 @@ class _ConnectRequestBCSSerializer implements BCSSerializer<ConnectRequest> {
     final optionsExists = value.claimOptions != null;
     serializer.serializeBool(optionsExists);
     if (optionsExists) {
-      ClaimOptions.bcsSerializer.serializeIn(serializer, value.claimOptions!);
+      value.claimOptions!.serializeBCS(serializer);
     }
   }
 }
