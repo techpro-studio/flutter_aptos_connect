@@ -20,6 +20,21 @@ extension BCSSerializerExt<T> on BCSSerializer<T> {
     return serializer.getBytes();
   }
 
+  void serializeOptionalIn(Serializer serializer, T? value) {
+    serializer.serializeBool(value != null);
+    if (value != null) {
+      serializeIn(serializer, value);
+    }
+  }
+
+  T? deserializeOptionalIn(Deserializer deserializer) {
+    final exists = deserializer.deserializeBool();
+    if (!exists) {
+      return null;
+    }
+    return deserializeIn(deserializer);
+  }
+
   T deserialize(Uint8List bytes) {
     final deserializer = Deserializer(bytes);
     return deserializeIn(deserializer);

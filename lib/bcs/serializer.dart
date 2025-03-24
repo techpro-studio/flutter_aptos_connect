@@ -1,11 +1,9 @@
-
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:aptos_connect/bcs/consts.dart';
 
 class Serializer {
-
   Uint8List buffer = Uint8List(64);
   int offset = 0;
 
@@ -52,18 +50,20 @@ class Serializer {
 
   void serializeU8(int value) {
     checkNumberRange(
-      BigInt.from(value), 
-      BigInt.zero, 
-      BigInt.from(MAX_U8_NUMBER));
+      BigInt.from(value),
+      BigInt.zero,
+      BigInt.from(MAX_U8_NUMBER),
+    );
 
     serialize(Uint8List.fromList([value]));
   }
 
   void serializeU16(int value) {
     checkNumberRange(
-      BigInt.from(value), 
-      BigInt.zero, 
-      BigInt.from(MAX_U16_NUMBER));
+      BigInt.from(value),
+      BigInt.zero,
+      BigInt.from(MAX_U16_NUMBER),
+    );
 
     int bytesLength = 2;
     _ensureBufferWillHandleSize(bytesLength);
@@ -74,10 +74,11 @@ class Serializer {
 
   void serializeU32(int value) {
     checkNumberRange(
-      BigInt.from(value), 
+      BigInt.from(value),
       BigInt.zero,
-      BigInt.from(MAX_U32_NUMBER));
-    
+      BigInt.from(MAX_U32_NUMBER),
+    );
+
     int bytesLength = 4;
     _ensureBufferWillHandleSize(bytesLength);
     final bd = ByteData.sublistView(buffer);
@@ -120,9 +121,10 @@ class Serializer {
 
   void serializeU32AsUleb128(int val) {
     checkNumberRange(
-      BigInt.from(val), 
-      BigInt.zero, 
-      BigInt.from(MAX_U32_NUMBER));
+      BigInt.from(val),
+      BigInt.zero,
+      BigInt.from(MAX_U32_NUMBER),
+    );
 
     var value = val;
     var valueArray = <int>[];
@@ -138,9 +140,14 @@ class Serializer {
     return buffer.sublist(0, offset);
   }
 
-  void checkNumberRange(BigInt value, BigInt minValue, BigInt maxValue, [String? message]) {
-      if (value > maxValue || value < minValue) {
-        throw ArgumentError(message ?? "Value is out of range");
-      }
+  void checkNumberRange(
+    BigInt value,
+    BigInt minValue,
+    BigInt maxValue, [
+    String? message,
+  ]) {
+    if (value > maxValue || value < minValue) {
+      throw ArgumentError(message ?? "Value is out of range");
+    }
   }
 }

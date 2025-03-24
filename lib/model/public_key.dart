@@ -15,19 +15,19 @@ enum PublicKeyType {
   final int _underline;
 }
 
-enum SingleKeyVariant {
+enum SingleKeyPublicKeyVariant {
   keyless._(3);
   // ed25519._(0),
   // secp256k1._(1),
   // federatedKeyless._(4);
 
-  const SingleKeyVariant._(int value) : _underline = value;
+  const SingleKeyPublicKeyVariant._(int value) : _underline = value;
 
   final int _underline;
 }
 
 class SingleKeyPublicKey {
-  final SingleKeyVariant variant;
+  final SingleKeyPublicKeyVariant variant;
   final dynamic key;
 
   SingleKeyPublicKey({required this.variant, required this.key});
@@ -42,10 +42,10 @@ class _SingleKeyPublicKeySerializer
   @override
   SingleKeyPublicKey deserializeIn(Deserializer deserializer) {
     final variant = deserializer.deserializeUleb128AsU32();
-    if (variant == SingleKeyVariant.keyless._underline) {
+    if (variant == SingleKeyPublicKeyVariant.keyless._underline) {
       final keyless = _keylessSerializer.deserializeIn(deserializer);
       return SingleKeyPublicKey(
-        variant: SingleKeyVariant.keyless,
+        variant: SingleKeyPublicKeyVariant.keyless,
         key: keyless,
       );
     }
@@ -55,7 +55,7 @@ class _SingleKeyPublicKeySerializer
   @override
   void serializeIn(Serializer serializer, SingleKeyPublicKey value) {
     serializer.serializeU32AsUleb128(value.variant._underline);
-    if (value.variant == SingleKeyVariant.keyless) {
+    if (value.variant == SingleKeyPublicKeyVariant.keyless) {
       _keylessSerializer.serializeIn(serializer, value.key);
     } else {
       throw UnimplementedError();
@@ -63,11 +63,19 @@ class _SingleKeyPublicKeySerializer
   }
 }
 
-class KeylessPublicKey {
+class KeylessPublicKey implements BCSSerializable {
   final String iss;
   final Uint8List idCommitment;
 
+  static const BCSSerializer<KeylessPublicKey> bcsSerializer =
+      _KeylessPublicKeySerializer._();
+
   KeylessPublicKey({required this.iss, required this.idCommitment});
+
+  @override
+  void serializeBCS(Serializer serializer) {
+    bcsSerializer.serializeIn(serializer, this);
+  }
 }
 
 class _KeylessPublicKeySerializer implements BCSSerializer<KeylessPublicKey> {
@@ -83,6 +91,30 @@ class _KeylessPublicKeySerializer implements BCSSerializer<KeylessPublicKey> {
   void serializeIn(Serializer serializer, KeylessPublicKey value) {
     serializer.serializeStr(value.iss);
     serializer.serializeBytes(value.idCommitment);
+  }
+}
+
+class Ed25519PublicKey {
+  final Uint8List bytes;
+  static const _size = 32;
+
+  static const BCSSerializer<Ed25519PublicKey> bcsSerializer =
+      _Ed25519PublicKeySerializer._();
+
+  Ed25519PublicKey({required this.bytes});
+}
+
+class _Ed25519PublicKeySerializer implements BCSSerializer<Ed25519PublicKey> {
+  const _Ed25519PublicKeySerializer._();
+
+  @override
+  Ed25519PublicKey deserializeIn(Deserializer deserializer) {
+    return Ed25519PublicKey(bytes: deserializer.deserializeBytes());
+  }
+
+  @override
+  void serializeIn(Serializer serializer, Ed25519PublicKey value) {
+    serializer.serializeBytes(value.bytes);
   }
 }
 

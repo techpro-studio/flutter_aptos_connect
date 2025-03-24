@@ -152,9 +152,13 @@ class IOTransport implements Transport {
         browserSettings: InAppBrowserSettings(
           hideUrlBar: true,
           hideCloseButton: false,
-          toolbarTopFixedTitle: "Aptos connect",
+          hideTitleBar: true,
+          hideToolbarBottom: true,
         ),
         webViewSettings: InAppWebViewSettings(
+          clearCache: true,
+          clearSessionCache: true,
+          cacheMode: CacheMode.LOAD_NO_CACHE,
           userAgent:
               Platform.isIOS
                   ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'

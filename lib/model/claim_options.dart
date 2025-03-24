@@ -30,7 +30,7 @@ class _ClaimOptionsBCSSerializer implements BCSSerializer<ClaimOptions> {
     final networkString = deserializer.deserializeStr();
     final asset = deserializer.deserializeOptionalStr();
     return ClaimOptions(
-      network: NetworkEnum.parse(networkString)!,
+      network: NetworkEnum.parseKey(networkString)!,
       privateKey: privateKeyBytes,
       asset: asset,
     );
