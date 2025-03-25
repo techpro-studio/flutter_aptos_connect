@@ -1,7 +1,10 @@
 name: aptos_connect
 description: "Aptos Connect package"
 version: 0.0.1
-homepage:
+homepage: https://github.com/techpro-studio/flutter_aptos_connect
+repository: https://github.com/techpro-studio/flutter_aptos_connect
+issue_tracker: https://github.com/techpro-studio/flutter_aptos_connect/issues
+license: MIT
 
 environment:
   sdk: ^3.7.0
