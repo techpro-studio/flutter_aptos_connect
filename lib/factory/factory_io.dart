@@ -25,9 +25,9 @@ class AptosConnectClientFactoryIO implements AptosConnectClientFactory {
 
   AptosConnectClientFactoryIO({
     required this.dAppName,
-    required this.aptosConnectRedirectUrl,
     required this.dAppImageUrl,
     required KVStorage storage,
+    this.aptosConnectRedirectUrl = 'http://localhost/callback',
     CryptoInterface? cryptoInterfaceOverride,
     KeyPairStorage? keyPairStorageOverride,
     CryptoClient? cryptoClientOverride,
