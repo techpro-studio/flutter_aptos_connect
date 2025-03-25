@@ -35,6 +35,6 @@ class WalletRequest {
     serializer.serializeStr(name);
     serializer.serializeBytes(data);
     serializer.serializeStr(version.toString());
-    return base64UrlEncode(serializer.getBytes());
+    return base64Encode(serializer.getBytes());
   }
 }
