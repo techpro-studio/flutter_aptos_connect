@@ -56,7 +56,7 @@ class AptosConnectClient {
     );
   }
 
-  Future<void> connect(AptosProvider provider) async {
+  Future<AccountInfo?> connect(AptosProvider provider) async {
     String? publicKey;
     if (kIsWeb || kIsWasm) {
       final keyPair = await _cryptoClient.getKeyPair();
@@ -70,7 +70,9 @@ class AptosConnectClient {
     );
     if (response.approved) {
       await _accountsStorage.appendAccount(response.value!.accountInfo);
+      return response.value!.accountInfo;
     }
+    return null;
   }
 
   Future<SigningMessageResponse?> signMessage(
