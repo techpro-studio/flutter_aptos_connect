@@ -1,39 +1,78 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+**Aptos Connect package.**
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+Port was done from:
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+Mobile -> https://www.npmjs.com/package/@aptos-connect/react-native-dapp-sdk 
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Web -> https://www.npmjs.com/package/@identity-connect/dapp-sdk
 
-## Features
+Implemented functionality:
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+    1. Connect wallet 
+    2. Sign message
 
-## Getting started
+Remaining to implement:
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+    1. Sign a transaction
+    2. Sign and submit a transaction.
 
-## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+Feel free to contribute with remaining fuctionality.
+
+Package has been built the way you can inject components. Also default factories exist in factory folder.
+
+
+To reduce amount of dependencies, KVStorage is abstract and Web Implementation exists only. 
+
+
+Here is an example how it could be used with default factories:
+
+**Mobile**:
 
 ```dart
-const like = 'sample';
+
+// it should be implementation of KVStorage
+final storage = SecureStorage();
+
+final mobileFactory = AptosConnectClientFactoryIO(
+          dAppName: 'App',
+          dAppImageUrl:
+              'https://avatars.githubusercontent.com/u/183836391?s=400&u=1ffaf9cebe6f1630901bfc4784e80f6855d1f785&v=4',
+          storage: storage,
+);
+
+final client = mobileFactory.make();
+
+
 ```
 
-## Additional information
+**Web**
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```dart
+final client  = AptosConnectClientFactoryWeb(
+          dAppName: 'App',
+          dAppImageUrl:
+              'https://avatars.githubusercontent.com/u/183836391?s=400&u=1ffaf9cebe6f1630901bfc4784e80f6855d1f785&v=4',
+).make();
+
+```
+
+Inside factories there is default assembly of AptosConnectClient. If you need to inject custom components with your own object lifecycle feel free to instantiate AptosConnectClient on your own. 
+
+once AptosConnectClient built you can use it for implemented functions.
+
+```dart
+
+  client.connect(AptosProvider.google);
+  
+  //or
+  
+  client.connect(AptosProvider.apple);
+  
+  // or 
+  
+  client.signMessage(SigningMessageRequest.fromStringAndNowNonce('Salam'));
+```
+
+
+

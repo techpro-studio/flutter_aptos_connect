@@ -9,6 +9,7 @@ import 'package:aptos_connect/crypto/key_pair_storage_impl.dart';
 import 'package:aptos_connect/factory/factory.dart';
 import 'package:aptos_connect/model/dapp.dart';
 import 'package:aptos_connect/storage/kv_storage.dart';
+import 'package:aptos_connect/storage/kv_storage_web.dart';
 import 'package:aptos_connect/transport/web_transport.dart';
 import 'package:web/web.dart' as web;
 
@@ -26,12 +27,12 @@ class AptosConnectClientFactoryWeb implements AptosConnectClientFactory {
   AptosConnectClientFactoryWeb({
     required this.dAppName,
     required this.dAppImageUrl,
-    required KVStorage storage,
+    KVStorage? storageOverride,
     CryptoInterface? cryptoInterfaceOverride,
     KeyPairStorage? keyPairStorageOverride,
     CryptoClient? cryptoClientOverride,
     AccountsStorage? accountStorageOverride,
-  }) : _kvStorage = storage,
+  }) : _kvStorage = storageOverride ?? KVStorageWeb(),
        _cryptoInterfaceOverride = cryptoInterfaceOverride,
        _keyPairStorageOverride = keyPairStorageOverride,
        _cryptoClientOverride = cryptoClientOverride,
