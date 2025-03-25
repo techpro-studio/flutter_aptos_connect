@@ -13,8 +13,6 @@ import 'package:aptos_connect/transport/transport.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:uuid/uuid.dart';
 
-enum AptosConnectBrowserError { cancelled }
-
 class AptosConnectBrowser extends InAppBrowser {
   Completer<String>? _completer = Completer();
 

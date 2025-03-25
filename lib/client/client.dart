@@ -81,7 +81,7 @@ class AptosConnectClient {
       walletRequest,
       SigningMessageResponse.bcsSerializer,
     );
-    print("Signing message ${response.value?.fullMessage}");
+    debugPrint("Signing message ${response.value?.fullMessage}");
     return response.value;
   }
 }
