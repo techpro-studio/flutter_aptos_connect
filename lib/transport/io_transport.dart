@@ -157,13 +157,23 @@ class IOTransport implements Transport {
           clearCache: true,
           clearSessionCache: true,
           cacheMode: CacheMode.LOAD_NO_CACHE,
+          cacheEnabled: false,
+          databaseEnabled: false,
+          domStorageEnabled: false,
           userAgent:
               Platform.isIOS
                   ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
                   : 'Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36',
         ),
       ),
-      urlRequest: URLRequest(url: WebUri(uri.toString())),
+      urlRequest: URLRequest(
+        url: WebUri(uri.toString()),
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0",
+        },
+      ),
     );
 
     final result = await browser._completer!.future;

@@ -1,6 +1,6 @@
 name: aptos_connect
 description: "Aptos Connect package"
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/techpro-studio/flutter_aptos_connect
 repository: https://github.com/techpro-studio/flutter_aptos_connect
 issue_tracker: https://github.com/techpro-studio/flutter_aptos_connect/issues
@@ -19,7 +19,8 @@ dependencies:
   web: ^1.1.1
   uuid: ^4.5.1
   cryptography: ^2.7.0
-  cryptography_flutter: ^2.3.2
+
+
 
 
 
