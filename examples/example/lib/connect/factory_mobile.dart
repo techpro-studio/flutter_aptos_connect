@@ -1,6 +1,5 @@
-import 'package:aptos_connect/factory/factory.dart';
-import 'package:aptos_connect/factory/factory_io.dart';
-import 'package:aptos_connect/storage/kv_storage.dart';
+import 'package:aptos_connect/aptos_connect.dart';
+import 'package:aptos_connect/aptos_connect_io.dart';
 
 class MemoryKVStorage implements KVStorage {
   final Map<String, String> _map = {};

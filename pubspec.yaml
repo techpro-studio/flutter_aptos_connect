@@ -13,12 +13,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  bcs: ^0.1.1
-  hex: ^0.2.0
   flutter_inappwebview: ^6.1.5
   web: ^1.1.1
   uuid: ^4.5.1
-  cryptography: ^2.7.0
+  aptos_core:
+    path: ../aptos_core
 
 
 

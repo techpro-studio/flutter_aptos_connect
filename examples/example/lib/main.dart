@@ -1,6 +1,4 @@
-import 'package:aptos_connect/client/client.dart';
-import 'package:aptos_connect/model/provider.dart';
-import 'package:aptos_connect/model/signing_message_request.dart';
+import 'package:aptos_connect/aptos_connect.dart';
 import 'package:example/connect/factory.dart';
 import 'package:flutter/material.dart';
 

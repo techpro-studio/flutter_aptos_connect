@@ -7,6 +7,13 @@ packages:
       path: "../.."
       relative: true
     source: path
+    version: "0.0.2"
+  aptos_core:
+    dependency: transitive
+    description:
+      path: "../../../aptos_core"
+      relative: true
+    source: path
     version: "0.0.1"
   async:
     dependency: transitive
@@ -16,14 +23,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.12.0"
-  bcs:
-    dependency: transitive
-    description:
-      name: bcs
-      sha256: "347b0053375c1970c3a0575196940580b37991e8690fa7f23b203b42dd4b5e13"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -72,14 +71,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.7.0"
-  cryptography_flutter:
-    dependency: transitive
-    description:
-      name: cryptography_flutter
-      sha256: a7fc3f0de42fb0947cbf213257aa3a69c89df561d104723ede8050658621f292
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.2"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -287,6 +278,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  poseidon:
+    dependency: transitive
+    description:
+      name: poseidon
+      sha256: b5c65711e8ed2b86770f7a752aa9865de9abc9394fa7ae9b270f5e895eb26e55
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -389,5 +388,5 @@ packages:
     source: hosted
     version: "1.1.1"
 sdks:
-  dart: ">=3.7.0 <4.0.0"
+  dart: ">=3.7.2 <4.0.0"
   flutter: ">=3.24.0"
