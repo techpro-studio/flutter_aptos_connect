@@ -49,10 +49,14 @@ final client = mobileFactory.make();
 **Web**
 
 ```dart
+
+final storage = LocalStorage();
+
 final client  = AptosConnectClientFactoryWeb(
           dAppName: 'App',
           dAppImageUrl:
               'https://avatars.githubusercontent.com/u/183836391?s=400&u=1ffaf9cebe6f1630901bfc4784e80f6855d1f785&v=4',
+          storage: storage,
 ).make();
 
 ```

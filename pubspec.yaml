@@ -1,6 +1,6 @@
 name: aptos_connect
 description: "Aptos Connect package"
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/techpro-studio/flutter_aptos_connect
 repository: https://github.com/techpro-studio/flutter_aptos_connect
 issue_tracker: https://github.com/techpro-studio/flutter_aptos_connect/issues
@@ -16,8 +16,7 @@ dependencies:
   flutter_inappwebview: ^6.1.5
   web: ^1.1.1
   uuid: ^4.5.1
-  aptos_core:
-    path: ../aptos_core
+  aptos_core: ^0.0.1
 
 
 
@@ -32,7 +31,7 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
-flutter:
+#flutter:
 
   # To add assets to your package, add an assets section, like this:
   # assets:
